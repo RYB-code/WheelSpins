@@ -18,7 +18,7 @@
    defaults = {
       el: null,
       members: ['Member 1', 'Member 2', 'Member 3', 'Member 4'],
-      colors: ['#C7181D', '#FCB937', '#A1B836', '#371979', '#C7181D', '#FCB937', '#A1B836', '#371979'],
+      colors: ['#FF5733', '#FF8D1A', '#FFD700', '#4CAF50', '#00BFFF', '#FF1493', '#8A2BE2', '#FF6347', '#32CD32'],
       radius: 250,
       startAngle: 0,
       textRadius: 160
@@ -112,7 +112,7 @@
         spinAngle = s.spinAngleStart - _this.easeOut(s.spinTime, 0, s.spinAngleStart, s.spinTimeTotal);
         s.startAngle += (spinAngle * Math.PI / 180);
         _this.draw();
-        s.spinTimeout = setTimeout(_this.rotate, 35);
+        s.spinTimeout = requestAnimationFrame(_this.rotate);
       };
 
       this.spin = function(cb) {

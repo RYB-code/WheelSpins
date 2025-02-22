@@ -1,7 +1,7 @@
 (function(root) {
   'use strict';
 
-  function _merge(obj1,obj2){
+  function _merge(obj1, obj2) {
     var obj3 = {};
     for (var attrname in obj1) { obj3[attrname] = obj1[attrname]; }
     for (var attrname in obj2) { obj3[attrname] = obj2[attrname]; }
@@ -14,134 +14,127 @@
         s,
         ctx,
         canvas;
-    
-   let defaults = {
-     el: '#wheel',
-     members: ['Member 1', 'Member 2', 'Member 3', 'Member 4', 'Member 5', 'Member 6', 'Member 7', 'Member 8'],
-     colors: [ '#FF007F', '#FF6600', '#FFCC00', '#00FF00', '#00BFFF', '#FF1493', 
-    '#8A2BE2', '#FF4500', '#32CD32', '#FFD700', '#FF6347', '#7FFF00'],
-     radius: 310
+
+    defaults = {
+      el: '#wheel',
+      members: ['Member 1', 'Member 2', 'Member 3', 'Member 4', 'Member 5', 'Member 6', 'Member 7', 'Member 8'],
+      colors: ['#FF007F', '#FF6600', '#FFCC00', '#00FF00', '#00BFFF', '#FF1493', '#8A2BE2', '#FF4500', '#32CD32', '#FFD700', '#FF6347', '#7FFF00'],
+      radius: 310,
+      startAngle: 0, // Default start angle
+      textRadius: 200 // Define textRadius for positioning text
     };
-
-let wheel = new PrizeWheel(settings);
-wheel.init();
-
 
     // s for settings
     s = _merge(defaults, options);
 
     s.width = s.height = s.radius * 2;
-    s.insideRadius = (s.width / 5);
-    s.outsideRadius = (s.width / 3) - 10;
+    s.insideRadius = s.width / 5;
+    s.outsideRadius = s.width / 3 - 10;
 
     s.startAngle = (s.startAngle === 'random' ? Math.floor(Math.random() * 360) : s.startAngle);
-    s.arc = Math.PI / (s.members.length / (s.members.length / (s.members.length / 2)));
-    s.spinTimeout =  null;
-    s.spinTime =  0;
-    s.spinTimeTotal =  0;
-    s.spinAngleStart =  null;
+    s.arc = (2 * Math.PI) / s.members.length; // Correct arc calculation
+    s.spinTimeout = null;
+    s.spinTime = 0;
+    s.spinTimeTotal = 0;
+    s.spinAngleStart = null;
 
     this.draw = function() {
-        var angle,
-            text,
-            i;
+      var angle, text, i;
 
-        canvas = document.querySelector(s.el);
-        canvas.width = s.width;
-        canvas.height = s.height;
-        if (canvas.getContext) {
+      canvas = document.querySelector(s.el);
+      if (!canvas) {
+        console.error('Canvas element not found');
+        return;
+      }
+      canvas.width = s.width;
+      canvas.height = s.height;
+      if (canvas.getContext) {
+        ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, s.width, s.height);
 
-          ctx = canvas.getContext('2d');
-          ctx.clearRect(0, 0, s.width, s.height);
+        ctx.strokeStyle = 'black';
+        ctx.lineWidth = 2;
 
-          ctx.strokeStyle = 'black';
-          ctx.lineWidth = 2;
+        ctx.font = '16px sans-serif';
 
-          ctx.font = '16px sans-serif';
+        for (i = 0; i < s.members.length; i++) {
+          angle = s.startAngle + i * s.arc;
 
-          for (i = 0; i < s.members.length; i++) {
-            angle = s.startAngle + i * s.arc;
-
-            ctx.fillStyle = s.colors[i];
-            ctx.beginPath();
-            ctx.arc(s.width / 2, s.height / 2, s.outsideRadius, angle, angle + s.arc, false);
-            ctx.arc(s.width / 2, s.height / 2, s.insideRadius, angle + s.arc, angle, true);
-            ctx.stroke();
-            ctx.fill();
-            ctx.save();
-
-            ctx.shadowOffsetX = -1;
-            ctx.shadowOffsetY = -1;
-            ctx.shadowBlur = 0;
-            ctx.fillStyle = "black";
-            ctx.translate((s.width / 2) + Math.cos(angle + s.arc / 2) * s.textRadius, (s.height / 2) + Math.sin(angle + s.arc / 2) * s.textRadius);
-            ctx.rotate(s.angle + s.arc / 2 + Math.PI / 2);
-            text = s.members[i];
-            ctx.fillText(text, -ctx.measureText(text).width / 2, 0);
-            ctx.restore();
-          }
-
-          //Arrow
-          ctx.fillStyle = "black";
+          ctx.fillStyle = s.colors[i];
           ctx.beginPath();
-          ctx.moveTo(s.radius - 4, s.radius - (s.outsideRadius + 5));
-          ctx.lineTo(s.radius + 4, s.radius - (s.outsideRadius + 5));
-          ctx.lineTo(s.radius + 4, s.radius - (s.outsideRadius - 5));
-          ctx.lineTo(s.radius + 9, s.radius - (s.outsideRadius - 5));
-          ctx.lineTo(s.radius + 0, s.radius - (s.outsideRadius - 13));
-          ctx.lineTo(s.radius - 9, s.radius - (s.outsideRadius - 5));
-          ctx.lineTo(s.radius - 4, s.radius - (s.outsideRadius - 5));
-          ctx.lineTo(s.radius - 4, s.radius - (s.outsideRadius + 5));
+          ctx.arc(s.width / 2, s.height / 2, s.outsideRadius, angle, angle + s.arc, false);
+          ctx.arc(s.width / 2, s.height / 2, s.insideRadius, angle + s.arc, angle, true);
+          ctx.stroke();
           ctx.fill();
+          ctx.save();
+
+          ctx.shadowOffsetX = -1;
+          ctx.shadowOffsetY = -1;
+          ctx.shadowBlur = 0;
+          ctx.fillStyle = "black";
+          ctx.translate((s.width / 2) + Math.cos(angle + s.arc / 2) * s.textRadius, (s.height / 2) + Math.sin(angle + s.arc / 2) * s.textRadius);
+          ctx.rotate(angle + s.arc / 2 + Math.PI / 2);
+          text = s.members[i];
+          ctx.fillText(text, -ctx.measureText(text).width / 2, 0);
+          ctx.restore();
         }
-      };
 
-      this.easeOut = function(t, b, c, d) {
-        var ts,
-            tc;
+        // Arrow
+        ctx.fillStyle = "black";
+        ctx.beginPath();
+        ctx.moveTo(s.radius - 4, s.radius - (s.outsideRadius + 5));
+        ctx.lineTo(s.radius + 4, s.radius - (s.outsideRadius + 5));
+        ctx.lineTo(s.radius + 4, s.radius - (s.outsideRadius - 5));
+        ctx.lineTo(s.radius + 9, s.radius - (s.outsideRadius - 5));
+        ctx.lineTo(s.radius + 0, s.radius - (s.outsideRadius - 13));
+        ctx.lineTo(s.radius - 9, s.radius - (s.outsideRadius - 5));
+        ctx.lineTo(s.radius - 4, s.radius - (s.outsideRadius - 5));
+        ctx.lineTo(s.radius - 4, s.radius - (s.outsideRadius + 5));
+        ctx.fill();
+      }
+    };
 
-        ts = (t/=d)*t;
-        tc = ts*t;
-        return b+c*(tc + -3*ts + 3*t);
-      };
+    this.easeOut = function(t, b, c, d) {
+      var ts, tc;
+      ts = (t /= d) * t;
+      tc = ts * t;
+      return b + c * (tc + -3 * ts + 3 * t);
+    };
 
-      this.rotate = function() {
-        var spinAngle;
-        s.spinTime += 30;
-        if((s.spinTime + 5000) >= s.spinTimeTotal) {
-          _this.stop();
-          return;
-        }
-        spinAngle = s.spinAngleStart - _this.easeOut(s.spinTime, 0, s.spinAngleStart, s.spinTimeTotal);
-        s.startAngle += (spinAngle * Math.PI / 180);
-        _this.draw();
-        s.spinTimeout = requestAnimationFrame(_this.rotate);
-      };
+    this.rotate = function() {
+      var spinAngle;
+      s.spinTime += 30;
+      if ((s.spinTime + 5000) >= s.spinTimeTotal) {
+        _this.stop();
+        return;
+      }
+      spinAngle = s.spinAngleStart - _this.easeOut(s.spinTime, 0, s.spinAngleStart, s.spinTimeTotal);
+      s.startAngle += (spinAngle * Math.PI / 180);
+      _this.draw();
+      s.spinTimeout = requestAnimationFrame(_this.rotate);
+    };
 
-      this.spin = function(cb) {
-          _this.cb = cb;
-          s.spinAngleStart = Math.random() * 10 + 10;
-          s.spinTime = 0;
-          s.spinTimeTotal = Math.random() * 3 + 4 * 3000;
-          _this.rotate();
-      };
+    this.spin = function(cb) {
+      _this.cb = cb;
+      s.spinAngleStart = Math.random() * 10 + 10;
+      s.spinTime = 0;
+      s.spinTimeTotal = Math.random() * 3 + 4 * 3000;
+      _this.rotate();
+    };
 
-      this.stop = function() {
-        var degrees;
-        var arcd;
-        var index;
+    this.stop = function() {
+      var degrees, arcd, index;
+      clearTimeout(s.spinTimeout);
+      degrees = s.startAngle * 180 / Math.PI + 90;
+      arcd = s.arc * 180 / Math.PI;
+      index = Math.floor((360 - degrees % 360) / arcd);
+      ctx.save();
+      _this.done(s.members[index]);
+    };
 
-        clearTimeout(s.spinTimeout);
-        degrees = s.startAngle * 180 / Math.PI + 90;
-        arcd = s.arc * 180 / Math.PI;
-        index = Math.floor((360 - degrees % 360) / arcd);
-        ctx.save();
-        _this.done(s.members[index]);
-      };
-
-      this.done = function(member) {
-        _this.cb(member);
-      };
+    this.done = function(member) {
+      _this.cb(member);
+    };
 
     return {
       init: _this.draw,
@@ -163,3 +156,13 @@ wheel.init();
   }
 
 })(this);
+
+// Example usage:
+var settings = {
+  el: '#wheel',
+  members: ['Prize 1', 'Prize 2', 'Prize 3', 'Prize 4', 'Prize 5', 'Prize 6', 'Prize 7', 'Prize 8'],
+  colors: ['#FF007F', '#FF6600', '#FFCC00', '#00FF00', '#00BFFF', '#FF1493', '#8A2BE2', '#FF4500']
+};
+
+var wheel = new PrizeWheel(settings);
+wheel.init();

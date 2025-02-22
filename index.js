@@ -11,14 +11,14 @@ const sectors = [
 
 // Updated probabilities (make sure they sum to 1)
 const probabilities = [
-  0, // $2.88 (sector 1)
-  0,  // $3.88 (sector 2)
-  0, // $5.88 (sector 3)
-  0,  // $8.88 (sector 4)
-  1,     // $15.88 (sector 5)
-  0,  // $88.88 (sector 6)
-  0, // $28.88 (sector 7)
-  0  // $58.88 (sector 8)
+  0.5,  // $2.88 (sector 1)
+  0,    // $3.88 (sector 2)
+  0,    // $5.88 (sector 3)
+  0,    // $8.88 (sector 4)
+  0,    // $15.88 (sector 5)
+  0.5,  // $88.88 (sector 6)
+  0,    // $28.88 (sector 7)
+  0     // $58.88 (sector 8)
 ];
 
 const tot = sectors.length;

@@ -1,17 +1,25 @@
-// Define the sectors and their respective probabilities
 const sectors = [
-  { color: "#FFBC03", text: "#333333", label: "Sweets" },
-  { color: "#FF5A10", text: "#333333", label: "Prize Draw" },
-  { color: "#FFBC03", text: "#333333", label: "Sweets" },
-  { color: "#FF5A10", text: "#333333", label: "Prize Draw" },
-  { color: "#FFBC03", text: "#333333", label: "Sweets + Prize Draw" },
-  { color: "#FF5A10", text: "#333333", label: "You Lose" },
-  { color: "#FFBC03", text: "#333333", label: "Prize Draw" },
-  { color: "#FF5A10", text: "#333333", label: "Sweets" },
+  { color: "#FFBC03", text: "#333333", label: "$2.88" },
+  { color: "#FF5A10", text: "#333333", label: "$3.88" },
+  { color: "#FFBC03", text: "#333333", label: "$5.88" },
+  { color: "#FF5A10", text: "#333333", label: "$8.88" },
+  { color: "#FFBC03", text: "#333333", label: "$15.88" },
+  { color: "#FF5A10", text: "#333333", label: "$88.88" },
+  { color: "#FFBC03", text: "#333333", label: "$28.88" },
+  { color: "#FF5A10", text: "#333333", label: "$58.88" },
 ];
 
-// Probabilities for each sector (ensure they sum to 1)
-const probabilities = [0, 0, 0, 0, 1, 0, 0, 0];
+// Updated probabilities (make sure they sum to 1)
+const probabilities = [
+  0, // $2.88 (sector 1)
+  0,  // $3.88 (sector 2)
+  0, // $5.88 (sector 3)
+  0,  // $8.88 (sector 4)
+  1,     // $15.88 (sector 5)
+  0,  // $88.88 (sector 6)
+  0, // $28.88 (sector 7)
+  0  // $58.88 (sector 8)
+];
 
 const tot = sectors.length;
 const spinEl = document.querySelector("#spin");
@@ -30,19 +38,25 @@ let spinButtonClicked = false;
 
 // Function to get a random sector based on weighted probabilities
 function getWeightedRandomSector() {
-  const cumulativeProbabilities = probabilities.map((value, index) => {
-    return probabilities.slice(0, index + 1).reduce((acc, prob) => acc + prob, 0);
+  const cumulativeProbabilities = [];
+  let sum = 0;
+
+  // Create cumulative probability distribution
+  probabilities.forEach((prob, index) => {
+    sum += prob;
+    cumulativeProbabilities.push(sum); // Cumulative sum
   });
 
-  const randomValue = Math.random();
+  const randomValue = Math.random(); // Generate random value between 0 and 1
 
+  // Determine which sector corresponds to the random value
   for (let i = 0; i < cumulativeProbabilities.length; i++) {
     if (randomValue <= cumulativeProbabilities[i]) {
       return i; // Return the index of the selected sector
     }
   }
 
-  return cumulativeProbabilities.length - 1; // In case of rounding errors, return the last sector
+  return cumulativeProbabilities.length - 1; // If rounding error, return the last sector
 }
 
 function getIndex() {
@@ -116,7 +130,6 @@ function init() {
     rotate(); // Update the wheel immediately
   });
 }
-
 // Show the popup with the result
 function showPopup(prize) {
   const resultPopup = document.createElement("div");
@@ -213,4 +226,5 @@ styleSheet.innerText = `
 document.head.appendChild(styleSheet);
 
 
+init();
 init();

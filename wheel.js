@@ -23,6 +23,17 @@
       startAngle: 0,
       textRadius: 160
     };
+    
+   let settings = {
+     el: '#wheel',
+     members: ['Member 1', 'Member 2', 'Member 3', 'Member 4', 'Member 5', 'Member 6', 'Member 7', 'Member 8'],
+     colors: ['#FF5733', '#FF8D1A', '#FFD700', '#4CAF50', '#00BFFF', '#FF1493', '#8A2BE2', '#FF6347'],
+     radius: 310
+    };
+
+let wheel = new PrizeWheel(settings);
+wheel.init();
+
 
     // s for settings
     s = _merge(defaults, options);

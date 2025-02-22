@@ -1,30 +1,18 @@
+// Define the sectors and their respective probabilities
 const sectors = [
   { color: "#FFBC03", text: "#333333", label: "Sweets" },
-  { color: "#FF5A10", text: "#333333", label: "Prize draw" },
+  { color: "#FF5A10", text: "#333333", label: "Prize Draw" },
   { color: "#FFBC03", text: "#333333", label: "Sweets" },
-  { color: "#FF5A10", text: "#333333", label: "Prize draw" },
-  { color: "#FFBC03", text: "#333333", label: "Sweets + Prize draw" },
-  { color: "#FF5A10", text: "#333333", label: "You lose" },
-  { color: "#FFBC03", text: "#333333", label: "Prize draw" },
+  { color: "#FF5A10", text: "#333333", label: "Prize Draw" },
+  { color: "#FFBC03", text: "#333333", label: "Sweets + Prize Draw" },
+  { color: "#FF5A10", text: "#333333", label: "You Lose" },
+  { color: "#FFBC03", text: "#333333", label: "Prize Draw" },
   { color: "#FF5A10", text: "#333333", label: "Sweets" },
 ];
 
-const events = {
-  listeners: {},
-  addListener: function (eventName, fn) {
-    this.listeners[eventName] = this.listeners[eventName] || [];
-    this.listeners[eventName].push(fn);
-  },
-  fire: function (eventName, ...args) {
-    if (this.listeners[eventName]) {
-      for (let fn of this.listeners[eventName]) {
-        fn(...args);
-      }
-    }
-  },
-};
+// Probabilities for each sector (ensure they sum to 1)
+const probabilities = [0, 0, 0, 0, 1, 0, 0, 0];
 
-const rand = (m, M) => Math.random() * (M - m) + m;
 const tot = sectors.length;
 const spinEl = document.querySelector("#spin");
 const ctx = document.querySelector("#wheel").getContext("2d");
@@ -40,7 +28,26 @@ let ang = 0; // Angle in radians
 
 let spinButtonClicked = false;
 
-const getIndex = () => Math.floor(tot - (ang / TAU) * tot) % tot;
+// Function to get a random sector based on weighted probabilities
+function getWeightedRandomSector() {
+  const cumulativeProbabilities = probabilities.map((value, index) => {
+    return probabilities.slice(0, index + 1).reduce((acc, prob) => acc + prob, 0);
+  });
+
+  const randomValue = Math.random();
+
+  for (let i = 0; i < cumulativeProbabilities.length; i++) {
+    if (randomValue <= cumulativeProbabilities[i]) {
+      return i; // Return the index of the selected sector
+    }
+  }
+
+  return cumulativeProbabilities.length - 1; // In case of rounding errors, return the last sector
+}
+
+function getIndex() {
+  return Math.floor(tot - (ang / TAU) * tot) % tot;
+}
 
 function drawSector(sector, i) {
   const ang = arc * i;
@@ -75,11 +82,10 @@ function rotate() {
 }
 
 function frame() {
-  // Fire an event after the wheel has stopped spinning
   if (!angVel && spinButtonClicked) {
     const finalSector = sectors[getIndex()];
-    events.fire("spinEnd", finalSector);
-    spinButtonClicked = false; // reset the flag
+    showPopup(finalSector.label); // Show popup with the prize
+    spinButtonClicked = false;
     return;
   }
 
@@ -97,16 +103,114 @@ function engine() {
 
 function init() {
   sectors.forEach(drawSector);
-  rotate(); // Initial rotation
-  engine(); // Start the animation
+  rotate();
+  engine();
   spinEl.addEventListener("click", () => {
-    if (!angVel) angVel = rand(0.25, 0.45); // Random initial speed
+    if (!angVel) angVel = Math.random() * 0.2 + 0.25; // Random initial speed
     spinButtonClicked = true;
+
+    const selectedSectorIndex = getWeightedRandomSector();
+    const selectedAngle = (selectedSectorIndex * arc) - (PI / 2);
+    angVel = Math.random() * 0.2 + 0.25; // Set spin speed
+    ang = selectedAngle; // Set angle to start the spin near the selected sector
+    rotate(); // Update the wheel immediately
   });
 }
 
-init();
+// Show the popup with the result
+function showPopup(prize) {
+  const resultPopup = document.createElement("div");
+  resultPopup.style.position = "fixed";
+  resultPopup.style.top = "50%";
+  resultPopup.style.left = "50%";
+  resultPopup.style.transform = "translate(-50%, -50%)";
+  resultPopup.style.background = "linear-gradient(145deg, #ff8a00, #e52e71)";
+  resultPopup.style.padding = "30px";
+  resultPopup.style.boxShadow = "0 10px 15px rgba(0, 0, 0, 0.2)";
+  resultPopup.style.borderRadius = "15px";
+  resultPopup.style.textAlign = "center";
+  resultPopup.style.animation = "fadeIn 0.5s ease-out"; // Add fade-in animation
+  resultPopup.style.zIndex = "1000";
 
-events.addListener("spinEnd", (sector) => {
-  console.log(`Woop! You won ${sector.label}`);
-});
+  // Create an attractive title with larger text
+  const resultText = document.createElement("h2");
+  resultText.textContent = `Congratulations! You won:`;
+  resultText.style.fontSize = "1.5em";
+  resultText.style.fontWeight = "bold";
+  resultText.style.color = "#fff";
+  resultText.style.marginBottom = "10px";
+  resultPopup.appendChild(resultText);
+
+  // Create the prize text with emphasis
+  const prizeText = document.createElement("h3");
+  prizeText.textContent = prize;
+  prizeText.style.fontSize = "2em";
+  prizeText.style.fontWeight = "bold";
+  prizeText.style.color = "#fff";
+  prizeText.style.marginBottom = "20px";
+  prizeText.style.textTransform = "uppercase";
+  prizeText.style.letterSpacing = "1px";
+  resultPopup.appendChild(prizeText);
+
+  // Add a stylish close button
+  const closeButton = document.createElement("button");
+  closeButton.textContent = "Close";
+  closeButton.style.padding = "12px 24px";
+  closeButton.style.backgroundColor = "#ff5c8f";
+  closeButton.style.color = "#fff";
+  closeButton.style.border = "none";
+  closeButton.style.borderRadius = "8px";
+  closeButton.style.cursor = "pointer";
+  closeButton.style.fontSize = "1.1em";
+  closeButton.style.transition = "0.3s ease";
+  closeButton.style.boxShadow = "0 4px 6px rgba(0, 0, 0, 0.1)";
+  closeButton.addEventListener("mouseover", () => {
+    closeButton.style.backgroundColor = "#e52e71";
+  });
+  closeButton.addEventListener("mouseout", () => {
+    closeButton.style.backgroundColor = "#ff5c8f";
+  });
+  closeButton.addEventListener("click", () => {
+    resultPopup.remove(); // Remove popup when close button is clicked
+  });
+  resultPopup.appendChild(closeButton);
+
+  // Add popup to the document body
+  document.body.appendChild(resultPopup);
+
+  // Optionally, add a background overlay to dim the rest of the screen
+  const overlay = document.createElement("div");
+  overlay.style.position = "fixed";
+  overlay.style.top = "0";
+  overlay.style.left = "0";
+  overlay.style.width = "100%";
+  overlay.style.height = "100%";
+  overlay.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
+  overlay.style.zIndex = "999";
+  document.body.appendChild(overlay);
+
+  // Close popup and overlay when clicking outside
+  overlay.addEventListener("click", () => {
+    resultPopup.remove();
+    overlay.remove();
+  });
+}
+
+// Add fade-in animation keyframes for the popup
+const styleSheet = document.createElement("style");
+styleSheet.innerText = `
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0.8);
+    }
+    100% {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+  }
+`;
+document.head.appendChild(styleSheet);
+
+
+init();

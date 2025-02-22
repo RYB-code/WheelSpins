@@ -1,62 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Prize Wheel</title>
-  <style>
-    body, html {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: #111;
-    }
+<!doctype html>
+<html>
+  <head>
+    <title>Welcome to Spin the Wheel</title>
+    <meta charset="UTF-8" />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap");
+    </style>
+    <link rel="stylesheet" href="src/styles.css" />
+  </head>
 
-    #wheel {
-      width: 620px;
-      height: 620px;
-      border: 2px solid #fff;
-      border-radius: 50%;
-    }
-
-    .btn-spin {
-      margin-top: 20px;
-      padding: 10px 20px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-  </style>
-</head>
-<body>
-  <div>
-    <canvas id="wheel"></canvas>
-    <button id="spin" class="btn-spin">Spin!</button>
-  </div>
-
-  <script src="wheel.js"></script>
-  <script>
-    const settings = {
-      el: '#wheel',
-      members: ['Prize 1', 'Prize 2', 'Prize 3', 'Prize 4', 'Prize 5'],
-      colors: ['#FF007F', '#FF6600', '#FFCC00', '#00FF00', '#00BFFF'],
-      radius: 310
-    };
-
-    const wheel = new PrizeWheel(settings);
-    wheel.init();
-
-    const spinBtn = document.getElementById('spin');
-    spinBtn.addEventListener('click', function () {
-      spinBtn.disabled = true;
-      wheel.spin(function (member) {
-        alert(`You landed on: ${member}`);
-        spinBtn.disabled = false;
-      });
-    });
-  </script>
-</body>
+  <body>
+    <div id="spin_the_wheel">
+      <canvas id="wheel" width="800" height="800"></canvas>
+      <div id="spin">SPIN</div>
+    </div>
+    <script defer src="src/index.js"></script>
+  </body>
 </html>

@@ -4,141 +4,59 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Prize Wheel</title>
-  <script src="wheel.js"></script> <!-- Ensure wheel.js is in the correct directory -->
   <style>
     body, html {
       margin: 0;
       padding: 0;
       height: 100%;
-      font-family: "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Geneva, Verdana, sans-serif;
+      font-family: Arial, sans-serif;
       display: flex;
-      flex-direction: column;
       justify-content: center;
       align-items: center;
-      text-align: center;
       background: #111;
-      overflow: hidden;
     }
 
-    /* Wheel Canvas */
     #wheel {
-      width: 100%;
-      max-width: 600px;
-      height: 400px;
-      margin-bottom: 20px;
-      cursor: pointer;
+      width: 620px;
+      height: 620px;
+      border: 2px solid #fff;
+      border-radius: 50%;
     }
 
-    /* Actions Section */
-    .actions {
-      margin-top: 20px;
-    }
-
-    /* Button Styles */
     .btn-spin {
-      background: #4162a8;
-      color: white;
-      font: bold 20px/1 "Helvetica Neue", Helvetica, Arial, sans-serif;
+      margin-top: 20px;
       padding: 10px 20px;
-      width: 150px;
-      cursor: pointer;
-      border: none;
-      transition: background-color 0.3s;
-    }
-
-    .btn-spin:hover {
-      background-color: #354d7d;
-    }
-
-    .btn-spin:focus {
-      outline: none;
-    }
-
-    .btn-spin:disabled {
-      background-color: #ccc;
-      cursor: not-allowed;
-    }
-
-    /* Loading state */
-    .loading {
-      display: none;
       font-size: 16px;
-      color: #fff;
-      margin-top: 10px;
-    }
-
-    .loading.active {
-      display: block;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <!-- Wheel Canvas -->
+  <div>
     <canvas id="wheel"></canvas>
-
-    <!-- Action Section -->
-    <section class="actions">
-      <button id="spin" class="btn-spin" aria-label="Spin the wheel">Spin!</button>
-      <div id="loading" class="loading">Spinning... Please wait!</div>
-    </section>
+    <button id="spin" class="btn-spin">Spin!</button>
   </div>
 
-<script>
-  console.log("Script loaded"); // Debugging: Check if script runs
+  <script src="wheel.js"></script>
+  <script>
+    const settings = {
+      el: '#wheel',
+      members: ['Prize 1', 'Prize 2', 'Prize 3', 'Prize 4', 'Prize 5'],
+      colors: ['#FF007F', '#FF6600', '#FFCC00', '#00FF00', '#00BFFF'],
+      radius: 310
+    };
 
-  // Random number generator
-  function getRandom(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  }
+    const wheel = new PrizeWheel(settings);
+    wheel.init();
 
-  // Option list for wheel (Can be customized)
-  const options = new Map([
-    ['1', "Prize 1"],
-    ['2', "Prize 2"],
-    ['3', "Prize 3"],
-    ['4', "Prize 4"],
-    ['5', "Prize 5"]
-  ]);
-
-  // Color palette for wheel segments
-  const pal = ["#03045e", "#023e8a", "#0077b6", "#0096c7", "#00b4d8", "#48cae4", "#90e0ef", "#ade8f4", "#caf0f8"];
-  const colours = Array.from({ length: options.size }, () => pal[Math.floor(Math.random() * pal.length)]);
-
-  // Prize wheel settings
-  const settings = {
-    el: '#wheel',
-    members: Array.from(options.keys()),
-    colors: colours,
-    radius: 310
-  };
-
-  console.log("Initializing PrizeWheel with settings:", settings); // Debugging: Check settings
-
-  // Initialize the prize wheel
-  const wheel = new PrizeWheel(settings);
-  wheel.init();
-
-  console.log("PrizeWheel initialized"); // Debugging: Check if initialization succeeds
-
-  // DOM elements
-  const spinBtn = document.getElementById('spin');
-  const loading = document.getElementById('loading');
-  let mem = 0;
-
-  // Handle spin button click
-  spinBtn.addEventListener('click', function () {
-    spinBtn.disabled = true; // Disable button while spinning
-    loading.classList.add('active'); // Show loading text
-
-    // Spin the wheel and handle the result
-    wheel.spin(function (member) {
-      mem = member;
-      loading.classList.remove('active'); // Hide loading text
-      alert(`You landed on: ${options.get(mem)}`); // Show selected prize
-      spinBtn.disabled = false; // Re-enable the button after spin
+    const spinBtn = document.getElementById('spin');
+    spinBtn.addEventListener('click', function () {
+      spinBtn.disabled = true;
+      wheel.spin(function (member) {
+        alert(`You landed on: ${member}`);
+        spinBtn.disabled = false;
+      });
     });
-  });
-</script>
+  </script>
 </body>
 </html>

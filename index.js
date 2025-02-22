@@ -227,4 +227,3 @@ document.head.appendChild(styleSheet);
 
 
 init();
-init();

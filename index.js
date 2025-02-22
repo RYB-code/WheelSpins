@@ -34,7 +34,7 @@ const PI = Math.PI;
 const TAU = 2 * PI;
 const arc = TAU / sectors.length;
 
-const friction = 0.991; // 0.995=soft, 0.99=mid, 0.98=hard
+const friction = 0.991; // Adjust this value for different stopping speeds
 let angVel = 0; // Angular velocity
 let ang = 0; // Angle in radians
 
@@ -61,7 +61,6 @@ function drawSector(sector, i) {
   ctx.fillStyle = sector.text;
   ctx.font = "bold 30px 'Lato', sans-serif";
   ctx.fillText(sector.label, rad - 10, 10);
-  //
 
   ctx.restore();
 }
@@ -84,10 +83,10 @@ function frame() {
     return;
   }
 
-  angVel *= friction; // Decrement velocity by friction
-  if (angVel < 0.002) angVel = 0; // Bring to stop
-  ang += angVel; // Update angle
-  ang %= TAU; // Normalize angle
+  angVel *= friction; // Apply friction to angular velocity
+  if (angVel < 0.002) angVel = 0; // Stop the wheel when it slows down enough
+  ang += angVel; // Update the angle
+  ang %= TAU; // Keep the angle within a circle
   rotate();
 }
 
@@ -99,9 +98,9 @@ function engine() {
 function init() {
   sectors.forEach(drawSector);
   rotate(); // Initial rotation
-  engine(); // Start engine
+  engine(); // Start the animation
   spinEl.addEventListener("click", () => {
-    if (!angVel) angVel = rand(0.25, 0.45);
+    if (!angVel) angVel = rand(0.25, 0.45); // Random initial speed
     spinButtonClicked = true;
   });
 }

@@ -4,6 +4,14 @@
     <title>Welcome to Spin the Wheel</title>
     <meta charset="UTF-8" />
     <style>
+      .logo {
+        position: absolute;
+        top: 10px;
+        right: 1px;
+        width: 100px;
+        height: auto;
+      }
+
       @import url("https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap");
     </style>
     <link rel="stylesheet" href="styles.css" />
@@ -13,7 +21,10 @@
     <div id="spin_the_wheel">
       <canvas id="wheel" width="800" height="800"></canvas>
       <div id="spin">SPIN</div>
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQT8Be2A17SDMoWohdOUSYtb4o6SXsW3XLeWQ&s" alt="Logo" class="logo">
     </div>
+
+    <!-- Linking to the external JavaScript file -->
     <script defer src="index.js"></script>
   </body>
 </html>

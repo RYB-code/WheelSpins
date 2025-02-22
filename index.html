@@ -1,160 +1,132 @@
-    <head>
-      <script src="wheel.js"></script>
+<head>
+  <script src="wheel.js"></script> <!-- Ensure that wheel.js is loaded properly -->
+</head>
 
-    </head>
-    
-    <style>
-      .starfield {
-        background: #111;
-        width: 100%;
-        height: auto;
-        left: 0px;
-        position: absolute;
-        z-index: -1;
-      }
-      body {
-        margin: 0;
-        font-family: "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Geneva, Verdana, sans-serif;
-        position: relative;
-        text-align: center;
-      }
+<style>
+  body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Geneva, Verdana, sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: #111;
+    overflow: hidden;
+  }
 
-      .container {
-      }
+  /* Wheel Canvas */
+  #wheel {
+    width: 100%;
+    max-width: 600px;
+    height: 400px;
+    margin-bottom: 20px;
+    cursor: pointer;
+  }
 
-      .header {
-        text-align: center;
-        margin: 0 0 40px 0;
-      }
+  /* Actions Section */
+  .actions {
+    margin-top: 20px;
+  }
 
-      .wheel-container {
-        position: relative;
-        text-align: center;
-      }
+  /* Button Styles */
+  .btn-spin {
+    background: #4162a8;
+    color: white;
+    font: bold 20px/1 "Helvetica Neue", Helvetica, Arial, sans-serif;
+    padding: 10px 20px;
+    width: 150px;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.3s;
+  }
 
-      #output {
-        display: block;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        font-size: 14px;
-      }
+  .btn-spin:hover {
+    background-color: #354d7d;
+  }
 
-      .actions {
-        display: block;
-        padding: 10px;
-        margin: 20px 0 50px 0;
-        text-align: center;
-      }
+  .btn-spin:focus {
+    outline: none;
+  }
 
-      .btn-spin {
-        display: inline-block;
-      }
+  .btn-spin:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
 
-      .punch {
-        position: relative;
-        background: #4162a8;
-        color: white;
-        font: bold 20px/1 "helvetica neue", helvetica, arial, sans-serif;
-        padding: 10px 0 12px 0;
-        text-align: center;
-        width: 150px;
-      }
+  /* Loading state */
+  .loading {
+    display: none;
+    font-size: 16px;
+    color: #fff;
+    margin-top: 10px;
+  }
 
-      button.punch:hover {
-          cursor: pointer; 
-      }
+  .loading.active {
+    display: block;
+  }
+</style>
 
+<div class="container">
+  <!-- Wheel Canvas -->
+  <canvas id="wheel"></canvas>
 
-    </style>
-    
-    
-    <div class="container">
-      <canvas id="starfield" class="starfield" width="1500" height="1000"></canvas> 
+  <!-- Action Section -->
+  <section class="actions">
+    <button id="spin" class="btn-spin" aria-label="Spin the wheel">Spin!</button>
+    <div id="loading" class="loading">Spinning... Please wait!</div>
+  </section>
+</div>
 
-      <canvas id="wheel"></canvas>
+<script>
+  // Random number generator
+  function getRandom(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
 
-      <section class="actions">
-        <button id="spin" class="btn-spin punch">Spin!</button>
-      </section>
-    </div>
-    <script>
-      function getRandom(min, max) {
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-      }			
-      var canvas = document.getElementById('starfield'),
-      context = canvas.getContext('2d'),
-      stars = 600,
-      colorrange = [0,60,240];
-      for (var i = 0; i < stars; i++) {
-        var x = Math.random() * canvas.offsetWidth;
-        y = Math.random() * canvas.offsetHeight,
-        radius = Math.random() * 1.2,
-        hue = colorrange[getRandom(0,colorrange.length - 1)],
-        sat = getRandom(50,100);
-        context.beginPath();
-        context.arc(x, y, radius, 0, 360);
-        context.fillStyle = "hsl(" + hue + ", " + sat + "%, 88%)";
-        context.fill();
-      }
-      let audios = new Map([
-        ['1', "https://soundgasm.net/u/Lustful_Crunch/M4F-You-like-taking-it-dont-you-Gentle-Mdom-Blowjob-Wet-sounds-Switchy-Breathplay-Good-Girl-Good-Little-Slut-Affection-You-dont-need-to-breathe-do-you"],
-        ['2', "https://soundgasm.net/u/Lustful_Crunch/M4F-Your-boyfriend-is-cheating-why-shouldnt-you-Seduction-Tease-Cheating-Gentle-Mdom"],
-        ['3', "https://soundgasm.net/u/Lustful_Crunch/M4F-Virgo-The-Initiate-virgin-first-kiss-missionary-first-time-creampie-insecure-nervous-kisses-vanilla"],
-        ['4', "https://soundgasm.net/u/Lustful_Crunch/M4F-Every-Breath-You-Take-script-fill-rape-abduction-fear-breath-play-drugs-degradation-light-sfx"],
-        ['5', "https://soundgasm.net/u/Lustful_Crunch/A4A-Aliens-Told-Me-to-Make-Wet-Sounds-with-Green-Apples-or-the-Script-that-Nobody-Will-Ever-Fill-ShitpostRidiculous-Performer-RequestsAbsurdNonsensicalLlamas-FightingFrogs-Eating-Cotton-CandyOuterspaceUnderwater"],
-        ['6', "https://soundgasm.net/u/Lustful_Crunch/M4F-You-drive-me-crazy-in-the-best-possible-way-rape-friend-to-rapist-mdom-size-difference-pinned-down-sort-of-yandere-l-bombs-unrequited-love-forced-orgasm-creampie-hints-at-future-impreg"],
-        ['7', "https://soundgasm.net/u/Lustful_Crunch/M4A-Revolving-At-Nine-Hundred-Miles-An-Hour-Script-Fill-Strangers-Hugs-Kissing-Space-Planetarium-Comfort"],
-        ['8', "https://soundgasm.net/u/Lustful_Crunch/M4F-Fit-to-Print-Script-Fill-Gentle-MDom-Rape-Dubcon-bc-Abuse-of-Power-Danish-Accent-College-Newspaper-Editor-in-Chief-and-New-writer-Shy-girl-Dont-Get-Caught-in-my-Office-Fingering-Handjob-Dirty-Talk-Whispering"],
-        ['9', "https://soundgasm.net/u/Lustful_Crunch/M4F-The-Sinner-Takes-It-All-Script-Fill-Spanking-Semi-Public-Cream-Pie-70s-Abba-Bilingual-Danish-Strangers-Cute-Kissing-Sound-Effects"],
-        ['10', "https://soundgasm.net/u/Lustful_Crunch/M4A-Learn-Chess-with-Crunchy-Chess-Long-Music-Pieces-on-Wood-Book-noises-Laughing-SFW"],
-        ['11', "https://soundgasm.net/u/Lustful_Crunch/M4F-Youll-stop-when-I-tell-you-to-right-Cuddles-BFE-Reluctance-Kissing-Unprotected-Sex-Riding"],
-        ['12', "https://soundgasm.net/u/Lustful_Crunch/M4F-Force-Bond-Episode-IV-A-New-Kink-Interrupting-Vanilla-Mind-Connection-Star-Wars-Creampie-Spoilers"],
-        ['13', "https://soundgasm.net/u/Lustful_Crunch/M4F-Just-Relax-and-Cum-in-my-Hands-Script-Fill-Gentle-Mdom-BFE-fingering-teasing-good-girls-sweet-comforting-stress-relief-whispers-aftercare"],
-        ['14', "https://soundgasm.net/u/Lustful_Crunch/M4A-Description-of-what-Good-Oral-Sex-is-to-me-Req-fill"],
-        ['15', "https://soundgasm.net/u/Lustful_Crunch/M4F-Distracting-You-From-Making-Dinner-Gentle-Mdom-Sweet-BFE-Oral-Good-Girl-Quickie-Spanks"],
-        ['16', "https://soundgasm.net/u/Lustful_Crunch/M4A-In-Bed-After-Having-Visitors-Over-Cuddly-Pillowtalk-L-bomb-Or-two-Relaxed-BFE-Breathing-Sleeping"],
-        ['17', "https://soundgasm.net/u/Lustful_Crunch/Challenge-M4A-Ranting-on-recent-Social-events-while-fapping-Ragefap-Ramblefap-Analytical"],
-        ['18', "https://soundgasm.net/u/Lustful_Crunch/M4A-Ramblefap"],
-        ['19', "https://soundgasm.net/u/Lustful_Crunch/Its-A-ME-MARIO"],
-        ['20', "https://soundgasm.net/u/Lustful_Crunch/M4F-Cupid-Good-Morning-Lets-cuddle-our-responsibilities-away-shall-we-BFE-Sweet-Morning-Cuddles-Relaxing-Kisses-We-dont-have-to-do-anything-today-right"]]
-      )
+  // Option list for wheel (Can be customized)
+  const options = new Map([
+    ['1', "Prize 1"],
+    ['2', "Prize 2"],
+    ['3', "Prize 3"],
+    ['4', "Prize 4"],
+    ['5', "Prize 5"]
+  ]);
 
-      let pal = ["#03045e","#023e8a","#0077b6","#0096c7","#00b4d8","#48cae4","#90e0ef","#ade8f4","#caf0f8"]
+  // Color palette for wheel segments
+  const pal = ["#03045e", "#023e8a", "#0077b6", "#0096c7", "#00b4d8", "#48cae4", "#90e0ef", "#ade8f4", "#caf0f8"];
+  const colours = Array.from({ length: options.size }, () => pal[Math.floor(Math.random() * pal.length)]);
 
-      colours = Array.from({length: audios.size}, () => pal[Math.floor(Math.random() * pal.length)])
-      let settings = {
-        el: '#wheel',
-        members: Array.from(audios.keys()),
-        colors: colours,
-        radius: 310
-      };
+  // Prize wheel settings
+  const settings = {
+    el: '#wheel',
+    members: Array.from(options.keys()),
+    colors: colours,
+    radius: 310
+  };
 
-      let wheel = new PrizeWheel(settings);
+  // Initialize the prize wheel
+  const wheel = new PrizeWheel(settings);
+  wheel.init();
 
-      wheel.init();
+  // DOM elements
+  const spinBtn = document.getElementById('spin');
+  const loading = document.getElementById('loading');
+  let mem = 0;
 
-      let spinBtn = document.querySelector('.btn-spin');
-      let orig = spinBtn.getAttribute("onClick")
+  // Handle spin button click
+  spinBtn.addEventListener('click', function () {
+    spinBtn.disabled = true; // Disable button while spinning
+    loading.classList.add('active'); // Show loading text
 
-      let newOnclick = (member) => {
-              console.log("it clicked!")
-              window.open(audios.get(member), '_blank')           
-      }
-      let mem = 0
-      spinBtn.addEventListener('click', function(e) {
-        if(spinBtn.textContent == "Listen"){
-           spinBtn.textContent = "Spin!"
-           newOnclick(mem)
-        }
-        else{
-        wheel.spin(function(member) {
-            spinBtn.textContent = "Listen"
-            mem = member
-        });
-      }
-      });
-
-
+    // Spin the wheel and handle the result
+    wheel.spin(function (member) {
+      mem = member;
+      loading.classList.remove('active'); // Hide loading text
+      alert(`You landed on: ${options.get(mem)}`); // Show selected prize
+      spinBtn.disabled = false; // Re-enable the button after spin
+    });
+  });
 </script>

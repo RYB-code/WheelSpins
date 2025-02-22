@@ -84,55 +84,61 @@
     </section>
   </div>
 
-  <script>
-    // Random number generator
-    function getRandom(min, max) {
-      return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
+<script>
+  console.log("Script loaded"); // Debugging: Check if script runs
 
-    // Option list for wheel (Can be customized)
-    const options = new Map([
-      ['1', "Prize 1"],
-      ['2', "Prize 2"],
-      ['3', "Prize 3"],
-      ['4', "Prize 4"],
-      ['5', "Prize 5"]
-    ]);
+  // Random number generator
+  function getRandom(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
 
-    // Color palette for wheel segments
-    const pal = ["#03045e", "#023e8a", "#0077b6", "#0096c7", "#00b4d8", "#48cae4", "#90e0ef", "#ade8f4", "#caf0f8"];
-    const colours = Array.from({ length: options.size }, () => pal[Math.floor(Math.random() * pal.length)]);
+  // Option list for wheel (Can be customized)
+  const options = new Map([
+    ['1', "Prize 1"],
+    ['2', "Prize 2"],
+    ['3', "Prize 3"],
+    ['4', "Prize 4"],
+    ['5', "Prize 5"]
+  ]);
 
-    // Prize wheel settings
-    const settings = {
-      el: '#wheel',
-      members: Array.from(options.keys()),
-      colors: colours,
-      radius: 310
-    };
+  // Color palette for wheel segments
+  const pal = ["#03045e", "#023e8a", "#0077b6", "#0096c7", "#00b4d8", "#48cae4", "#90e0ef", "#ade8f4", "#caf0f8"];
+  const colours = Array.from({ length: options.size }, () => pal[Math.floor(Math.random() * pal.length)]);
 
-    // Initialize the prize wheel
-    const wheel = new PrizeWheel(settings);
-    wheel.init();
+  // Prize wheel settings
+  const settings = {
+    el: '#wheel',
+    members: Array.from(options.keys()),
+    colors: colours,
+    radius: 310
+  };
 
-    // DOM elements
-    const spinBtn = document.getElementById('spin');
-    const loading = document.getElementById('loading');
-    let mem = 0;
+  console.log("Initializing PrizeWheel with settings:", settings); // Debugging: Check settings
 
-    // Handle spin button click
-    spinBtn.addEventListener('click', function () {
-      spinBtn.disabled = true; // Disable button while spinning
-      loading.classList.add('active'); // Show loading text
+  // Initialize the prize wheel
+  const wheel = new PrizeWheel(settings);
+  wheel.init();
 
-      // Spin the wheel and handle the result
-      wheel.spin(function (member) {
-        mem = member;
-        loading.classList.remove('active'); // Hide loading text
-        alert(`You landed on: ${options.get(mem)}`); // Show selected prize
-        spinBtn.disabled = false; // Re-enable the button after spin
-      });
+  console.log("PrizeWheel initialized"); // Debugging: Check if initialization succeeds
+
+  // DOM elements
+  const spinBtn = document.getElementById('spin');
+  const loading = document.getElementById('loading');
+  let mem = 0;
+
+  // Handle spin button click
+  spinBtn.addEventListener('click', function () {
+    spinBtn.disabled = true; // Disable button while spinning
+    loading.classList.add('active'); // Show loading text
+
+    // Spin the wheel and handle the result
+    wheel.spin(function (member) {
+      mem = member;
+      loading.classList.remove('active'); // Hide loading text
+      alert(`You landed on: ${options.get(mem)}`); // Show selected prize
+      spinBtn.disabled = false; // Re-enable the button after spin
     });
-  </script>
+  });
+</script>
 </body>
 </html>
